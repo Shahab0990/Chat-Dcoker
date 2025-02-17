@@ -1,0 +1,38 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 🔄 Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: 🧹 Clean Workspace
+        run: rm -rf *
+
+      - name: 🔍 SonarQube Code Analysis
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: "https://sonarqube.example.com"
+        with:
+          args: >
+            -Dsonar.projectKey=chat-app
+            -Dsonar.organization=my-org
+            -Dsonar.sources=.
+
+      - name: 🛠 Set Up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: 🏗 Build & Deploy with Docker Compose
+        run: docker-compose up -d --build
