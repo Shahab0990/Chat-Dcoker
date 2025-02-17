@@ -27,8 +27,8 @@ jobs:
           SONAR_HOST_URL: "https://sonarcloud.io"
         with:
           args: >
-            -Dsonar.projectKey=chat-app
-            -Dsonar.organization=my-org
+            -Dsonar.projectKey=Shahab0990_Chat-Dcoker
+            -Dsonar.organization=Shahab0990
             -Dsonar.sources=.
 
       - name: 🛠 Set Up Docker Buildx
