@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   mongodb:
-    image: mongo:latest  # Using the official MongoDB image instead
+    image: mongo:latest
     container_name: mongodb
     restart: always
     volumes:
@@ -17,7 +15,7 @@ services:
 
   backend:
     build:
-      context: ./backend  # Assuming your backend Dockerfile is in ./backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: full-stack_backend
     restart: always
@@ -35,7 +33,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend  # Assuming your frontend Dockerfile is in ./frontend
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: full-stack_frontend
     restart: always
@@ -46,9 +44,35 @@ services:
     networks:
       - fullstack-chatapp
 
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - fullstack-chatapp
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: always
+    ports:
+      - "3000:3000"  # Grafana UI available at http://localhost:3000
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - fullstack-chatapp
+
 networks:
   fullstack-chatapp:
     driver: bridge
 
 volumes:
   mongo-data:
+  grafana-data:
+
